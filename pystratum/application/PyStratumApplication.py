@@ -1,3 +1,10 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 from cleo import Application
 
 from pystratum.command.ConstantsCommand import ConstantsCommand
@@ -16,7 +23,7 @@ class PyStratumApplication(Application):
         """
         Object constructor
         """
-        Application.__init__(self, 'pystratum', '0.9.21')
+        Application.__init__(self, 'pystratum', '0.10.4')
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_default_commands(self):

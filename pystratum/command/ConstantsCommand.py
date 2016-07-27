@@ -1,3 +1,10 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import configparser
 from pydoc import locate
 
@@ -52,9 +59,10 @@ class ConstantsCommand(Command):
         config.read(config_file)
 
         rdbms = config.get('database', 'rdbms').lower()
+        label_regex = config.get('constants', 'label_regex')
 
         constants = ConstantsCommand.create_constants(rdbms)
-        constants.main(config_file)
+        constants.main(config_file, label_regex)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -72,15 +80,15 @@ class ConstantsCommand(Command):
         #       dependencies for the other RDBMSs are not required).
 
         if rdbms == 'mysql':
-            module = locate('pystratum.mysql.MySqlConstants')
+            module = locate('pystratum_mysql.MySqlConstants')
             return module.MySqlConstants()
 
         if rdbms == 'mssql':
-            module = locate('pystratum.mssql.MsSqlConstants')
+            module = locate('pystratum_mssql.MsSqlConstants')
             return module.MsSqlConstants()
 
         if rdbms == 'pgsql':
-            module = locate('pystratum.pgsql.PgSqlConstants')
+            module = locate('pystratum_pgsql.PgSqlConstants')
             return module.PgSqlConstants()
 
         raise Exception("Unknown RDBMS '{0!s}'.".format(rdbms))

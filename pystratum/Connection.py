@@ -1,8 +1,14 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import os
 from configparser import ConfigParser
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class Connection:
     """
     Parent class for RDBMS connections.

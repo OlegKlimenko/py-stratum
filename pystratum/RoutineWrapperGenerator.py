@@ -1,3 +1,10 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import abc
 import configparser
 import json
@@ -6,7 +13,6 @@ import os
 from pystratum.Util import Util
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class RoutineWrapperGenerator:
     """
     Class for generating a class with wrapper methods for calling stored routines in a MySQL database.

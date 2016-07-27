@@ -1,6 +1,7 @@
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -10,14 +11,14 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='PyStratum',
 
-    version='0.9.21',
+    version='0.10.4',
 
-    description='A stored procedure and function loader, wrapper generator for MySQL, SQL Server, and PostgresSQL',
+    description='A stored procedure and function loader and wrapper generator for MySQL, SQL Server, and PostgresSQL',
     long_description=long_description,
 
     url='https://github.com/SetBased/py-stratum',
 
-    author='Paul Water, Valery Zuban',
+    author='Set Based IT Consultancy',
     author_email='info@setbased.nl',
 
     license='MIT',
@@ -38,7 +39,7 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 
-    keywords='stored routines,stored procedure,stored procedures,wrapper, loader,MySQL,SQL Server',
+    keywords='stored routines, stored procedure, stored procedures, wrapper, loader, MySQL, SQL Server, PostgreSQL',
 
     packages=find_packages(exclude=['build', 'test']),
 

@@ -1,10 +1,16 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import abc
 import os
 import re
 import sys
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class RoutineLoaderHelper:
     """
     Class for loading a single stored routine into a RDBMS instance from a (pseudo) SQL file.

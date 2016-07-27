@@ -1,7 +1,13 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import os
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class Util:
     """
     A helper class with miscellaneous functions that don;t belong somewhere else.

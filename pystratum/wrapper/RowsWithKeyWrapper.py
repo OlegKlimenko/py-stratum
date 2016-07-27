@@ -1,9 +1,15 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import abc
 
 from pystratum.wrapper.Wrapper import Wrapper
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class RowsWithKeyWrapper(Wrapper):
     """
     Parent class wrapper wrapper method generator for stored procedures whose result set must be returned using tree
@@ -17,6 +23,9 @@ class RowsWithKeyWrapper(Wrapper):
 
     # ------------------------------------------------------------------------------------------------------------------
     def _write_result_handler(self, routine):
+        """
+        Generates code for calling the stored routine in the wrapper method.
+        """
         self._write_line('ret = {}')
         self._write_execute_rows(routine)
         self._write_line('for row in rows:')

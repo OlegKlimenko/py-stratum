@@ -1,3 +1,10 @@
+"""
+PyStratum
+
+Copyright 2015-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import abc
 import configparser
 import json
@@ -6,7 +13,6 @@ import re
 import sys
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class RoutineLoader:
     """
     Class for loading stored routines into a RDBMS instance from (pseudo) SQL files.
