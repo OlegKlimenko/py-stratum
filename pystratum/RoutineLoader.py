@@ -10,7 +10,6 @@ import configparser
 import json
 import os
 import re
-import sys
 
 
 class RoutineLoader:
@@ -19,7 +18,12 @@ class RoutineLoader:
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, io):
+        """
+        Object constructor.
+
+        :param pystratum.style.PyStratumStyle.PyStratumStyle io: The output decorator.
+        """
         self.error_file_names = set()
         """
         A set with source names that are not loaded into RDBMS instance.
@@ -96,6 +100,13 @@ class RoutineLoader:
         :type: str
         """
 
+        self._io = io
+        """
+        The output decorator.
+
+        :type: pystratum.style.PyStratumStyle.PyStratumStyle
+        """
+
     # ------------------------------------------------------------------------------------------------------------------
     def main(self, config_filename, file_names=None):
         """
@@ -106,6 +117,8 @@ class RoutineLoader:
 
         :rtype: int The status of exit.
         """
+        self._io.title('Loader')
+
         if file_names:
             self._load_list(config_filename, file_names)
         else:
@@ -122,8 +135,9 @@ class RoutineLoader:
         """
         Show info about sources files of stored routines that were not loaded successfully.
         """
-        for filename in sorted(self.error_file_names):
-            print("Error loading file '%s'." % filename)
+        if self.error_file_names:
+            self._io.warning('Routines in the files below are not loaded:')
+            self._io.listing(sorted(self.error_file_names))
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -213,8 +227,8 @@ class RoutineLoader:
                     relative_path = os.path.relpath(os.path.join(dir_path, name))
 
                     if basename in self._source_file_names:
-                        print("Error: Files '%s' and '%s' have the same basename." %
-                              (self._source_file_names[basename], relative_path), file=sys.stderr)
+                        self._io.error("Files '{0}' and '{1}' have the same basename.".
+                                       format(self._source_file_names[basename], relative_path))
                         self.error_file_names.add(relative_path)
                     else:
                         self._source_file_names[basename] = relative_path
@@ -255,6 +269,8 @@ class RoutineLoader:
         """
         Loads all stored routines into the RDBMS instance instance.
         """
+        self._io.writeln('')
+
         for routine_name in sorted(self._source_file_names):
             if routine_name in self._pystratum_metadata:
                 old_metadata = self._pystratum_metadata[routine_name]
@@ -317,8 +333,8 @@ class RoutineLoader:
         """
         Writes the metadata of all stored routines to the metadata file.
         """
-        with open(self._pystratum_metadata_filename, 'w') as f:
-            json.dump(self._pystratum_metadata, f, indent=4, sort_keys=True)
+        with open(self._pystratum_metadata_filename, 'w') as stream:
+            json.dump(self._pystratum_metadata, stream, indent=4, sort_keys=True)
 
     # ------------------------------------------------------------------------------------------------------------------
     def find_source_files_from_list(self, file_names):
@@ -333,11 +349,11 @@ class RoutineLoader:
                 if routine_name not in self._source_file_names:
                     self._source_file_names[routine_name] = file_name
                 else:
-                    print("Error: Files '%s' and '%s' have the same basename." %
-                          (self._source_file_names[routine_name], file_name), file=sys.stderr)
+                    self._io.error("Files '{0}' and '{1}' have the same basename.".
+                                   format(self._source_file_names[routine_name], file_name))
                     self.error_file_names.add(file_name)
             else:
-                print("File not exists: '%s'." % file_name)
+                self._io.error("File not exists: '{0}'".format(file_name))
 
     # ------------------------------------------------------------------------------------------------------------------
     def _get_constants(self):
@@ -345,6 +361,7 @@ class RoutineLoader:
         Temp solution for replace constants.
         """
         if os.path.exists(self._constants_filename):
+            count = 0
             with open(self._constants_filename, 'r') as file:
                 for line in file:
                     if line.strip() != "\n":
@@ -358,5 +375,9 @@ class RoutineLoader:
                             if name in self._replace_pairs:
                                 raise Exception("Duplicate placeholder '%s'" % name)
                             self._replace_pairs[name] = value
+                    count += 1
+
+            self._io.text('Read {0} constants for substitution from <fso>{1}</fso>'.
+                             format(count, self._constants_filename))
 
 # ----------------------------------------------------------------------------------------------------------------------

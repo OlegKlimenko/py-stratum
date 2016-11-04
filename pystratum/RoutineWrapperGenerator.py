@@ -19,7 +19,12 @@ class RoutineWrapperGenerator:
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, io):
+        """
+        Object constructor.
+
+        :param pystratum.style.PyStratumStyle.PyStratumStyle io: The output decorator.
+        """
         self._code = ''
         """
         The generated Python code buffer.
@@ -69,8 +74,15 @@ class RoutineWrapperGenerator:
         :type: str
         """
 
+        self._io = io
+        """
+        The output decorator.
+
+        :type: pystratum.style.PyStratumStyle.PyStratumStyle
+        """
+
     # ------------------------------------------------------------------------------------------------------------------
-    def run(self, config_filename):
+    def main(self, config_filename):
         """
         The "main" of the wrapper generator. Returns 0 on success, 1 if one or more errors occurred.
 
@@ -80,6 +92,20 @@ class RoutineWrapperGenerator:
         """
         self._read_configuration_file(config_filename)
 
+        if self._wrapper_class_name:
+            self._io.title('Wrapper')
+
+            self.__generate_wrapper_class()
+        else:
+            self._io.log_verbose('Wrapper not enabled')
+
+        return 0
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def __generate_wrapper_class(self):
+        """
+        Generates the wrapper class.
+        """
         routines = self._read_routine_metadata()
 
         self._write_class_header()
@@ -89,13 +115,11 @@ class RoutineWrapperGenerator:
                 if routines[routine_name]['designation'] != 'hidden':
                     self._write_routine_function(routines[routine_name])
         else:
-            print("No files with stored routines found.")
+            self._io.error('No files with stored routines found')
 
         self._write_class_trailer()
 
-        Util.write_two_phases(self._wrapper_filename, self._code)
-
-        return 0
+        Util.write_two_phases(self._wrapper_filename, self._code, self._io)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _read_configuration_file(self, config_filename):
@@ -133,11 +157,14 @@ class RoutineWrapperGenerator:
         """
         Generate a class header for stored routine wrapper.
         """
-        self._write_line("from {0!s} import {1!s}".format(self._parent_class_namespace, self._parent_class_name))
+        self._write_line('from {0!s} import {1!s}'.format(self._parent_class_namespace, self._parent_class_name))
         self._write_line()
         self._write_line()
         self._write_line('# ' + ('-' * 118))
-        self._write_line("class {0!s}({1!s}):".format(self._wrapper_class_name, self._parent_class_name))
+        self._write_line('class {0!s}({1!s}):'.format(self._wrapper_class_name, self._parent_class_name))
+        self._write_line('    """')
+        self._write_line('    The stored routines wrappers.')
+        self._write_line('    """')
 
     # ------------------------------------------------------------------------------------------------------------------
     def _write_line(self, text=''):

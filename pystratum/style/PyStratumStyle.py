@@ -5,6 +5,7 @@ Copyright 2015-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+from cleo import Output
 from cleo import OutputFormatterStyle
 from cleo.styles import CleoStyle
 
@@ -39,5 +40,39 @@ class PyStratumStyle(CleoStyle):
         # Create style for SQL statements.
         style = OutputFormatterStyle('magenta', None, ['bold'])
         output.get_formatter().set_style('sql', style)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def warning(self, message):
+        self.block(message, 'WARNING', 'fg=white;bg=red', padding=True)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def text(self, message):
+        if isinstance(message, list):
+            messages = message
+        else:
+            messages = [message]
+
+        for line in messages:
+            self.writeln(' {0}'.format(line))
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def log_verbose(self, message):
+        """
+        Logs a message only when logging level is verbose.
+
+        :param str|list[str] message: The message.
+        """
+        if self.get_verbosity() >= Output.VERBOSITY_VERBOSE:
+            self.writeln(message)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def log_very_verbose(self, message):
+        """
+        Logs a message only when logging level is very verbose.
+
+        :param str|list[str] message: The message.
+        """
+        if self.get_verbosity() >= Output.VERBOSITY_VERY_VERBOSE:
+            self.writeln(message)
 
 # ----------------------------------------------------------------------------------------------------------------------

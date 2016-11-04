@@ -13,39 +13,41 @@ from pystratum.style.PyStratumStyle import PyStratumStyle
 class PyStratumCommand(Command):
     """
     Loads stored routines and generates a wrapper class
+
+    stratum
+        {config_file : The audit configuration file}
+        {file_names?* : Sources with stored routines}
     """
 
-    name = 'stratum'
+    # ------------------------------------------------------------------------------------------------------------------
+    def execute(self, i, o):
+        self.input = i
+        self.output = o
 
-    arguments = [
-        {
-            'name':        'config_file',
-            'description': 'The audit configuration file',
-            'required':    True
-        },
-        {
-            'name':        'file_names',
-            'description': 'Sources with stored routines',
-            'list':        True
-        }
-    ]
+        return self.handle()
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):
         """
         Executes the actual Stratum program.
         """
-        self.io = PyStratumStyle(self.input, self.output)
+        self.output = PyStratumStyle(self.input, self.output)
 
         command = self.get_application().find('constants')
-        command.execute(self.input, self.output)
+        ret = command.execute(self.input, self.output)
+        if ret:
+            return ret
 
         command = self.get_application().find('loader')
-        command.execute(self.input, self.output)
+        ret = command.execute(self.input, self.output)
+        if ret:
+            return ret
 
         command = self.get_application().find('wrapper')
-        command.execute(self.input, self.output)
+        ret = command.execute(self.input, self.output)
 
-        self.io.writeln('')
+        self.output.writeln('')
+
+        return ret
 
 # ----------------------------------------------------------------------------------------------------------------------
